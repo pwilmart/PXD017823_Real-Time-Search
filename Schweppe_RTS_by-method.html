@@ -13128,13 +13128,31 @@ div#notebook {
 <li><a href="https://www.mcponline.org/content/16/5/873">Internal Reference Scaling (IRS)</a> normalization</li>
 </ul>
 <p>There are multiple comparisons that can be made. We can compare the same cell line between regular acquisition or RTS acquisition (we would have three comparisons), or we can compare each cell line to the other two cell lines for each acquisition method (regular or RTS). How do we compare the two acquisition methods that were done in two separate TMT experiments? With internal reference scaling (IRS), of course. The samples are the same in each experiment, so this is the very definition of a balanced study design. We will take the average of each 10-channel experiment and use those averages as the proxies for internal reference channels.</p>
-<p>Protein IDs by Acquisition Method
-Acquisition|Proteins
------------|--------
-Regular SPS MS3 Method|7,361
-RTS Method|7,507
-Union of results|7,964
-Intersection of results|7,469</p>
+<h4 id="Protein-IDs-by-Acquisition-Method:">Protein IDs by Acquisition Method:<a class="anchor-link" href="#Protein-IDs-by-Acquisition-Method:">&#182;</a></h4><table>
+<thead><tr>
+<th>Acquisition</th>
+<th>Proteins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Regular SPS MS3 Method</td>
+<td>7,361</td>
+</tr>
+<tr>
+<td>RTS Method</td>
+<td>7,507</td>
+</tr>
+<tr>
+<td>Union of results</td>
+<td>7,964</td>
+</tr>
+<tr>
+<td>Intersection of results</td>
+<td>7,469</td>
+</tr>
+</tbody>
+</table>
 <p>The individual protein numbers are based on analyzing each acquisition method separately and using a two peptide per protein rule. The setup for the IRS analysis considers both experiments together. The IRS method applies to the proteins in the intersection of the two experiments. The intersection is 93.8% of the union.</p>
 <blockquote><p><a href="https://pubs.acs.org/doi/10.1021/acs.jproteome.8b00899">First RTS paper</a> Erickson, B.K., Mintseris, J., Schweppe, D.K., Navarrete-Perea, J., Erickson, A.R., Nusinow, D.P., Paulo, J.A. and Gygi, S.P., 2019. Active instrument engagement combined with a real-time database search for improved performance of sample multiplexing workflows. Journal of proteome research, 18(3), pp.1299-1306.</p>
 <p><a href="https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00860">Second RTS paper</a> Devin K. Schweppe, Jimmy K. Eng, Qing Yu, Derek Bailey, Ramin Rad, Jose Navarrete-Perea, Edward L. Huttlin, Brian K. Erickson, Joao A. Paulo, and Steven P. Gygi, 2020. Full-Featured, Real-Time Database Searching Platform Enables Fast and Accurate Multiplexed Quantitative Proteomics. Journal of proteome research, 19(3), pp.2026−2034.</p>
