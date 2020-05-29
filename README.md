@@ -16,40 +16,46 @@ Re-analysis of data from PXD017823 exploring real time search for TMT.
 
 ## Overview
 
-The two papers listed above demonstrate the use of real time searching (RTS) to control data acquisition in [SPS MS3 TMT](https://pubs.acs.org/doi/abs/10.1021/ac502040v) experiments. The first paper used a simple binomial scoring model to show that searches could be completed in millisecond time scales and that now instrument control APIs could be used to react to search MS2 scans in real time.
+The two papers listed above demonstrate the use of real time searching (RTS) to control data acquisition in [SPS MS3 TMT](https://pubs.acs.org/doi/abs/10.1021/ac502040v) experiments. The first paper used a simple binomial scoring model to show that searches could be completed in millisecond time scales and that new instrument control APIs could be used to react to searched MS2 scans in real time.
 
 The motivations for this are mostly due to the time the [Tribrid Orbitraps](https://pubs.acs.org/doi/abs/10.1021/ac403115c) spend on the MS3 scan for reporter ion quantification in TMT experiments. It was argued that many of the SPS MS3 linked scans did not produce usable data. If the instruments not-so-short attention span could be focused on identifiable peptides, maybe the amount of useful data per unit of instrument time could be improved.
 
-The second paper by Schweppe et al. built upon the first paper in a few ways. The in-house binomial search engine (more of a Briggs and Stratton engine) was replaced by a souped up and stripped down version of the [Comet search engine](http://comet-ms.sourceforge.net/) (Comet on nitro?). Within reason, this allows more realistic search parameters and protein FASTA files. Monoisotopic peak refinement and a running false discovery rate method for score cutoff determination were also implemented along with RTS in a package called Orbiter. Part of the running FDR method was a linear discriminant combination of Comet score values to better separate incorrect from correct matches.
+The second paper by Schweppe et al. built upon the first paper in a few ways. The in-house binomial search engine (more of a Briggs and Stratton engine) was replaced by a souped up and stripped down version of the [Comet search engine](http://comet-ms.sourceforge.net/) (Comet on nitro?). Within reason, this allows more realistic search parameters and protein FASTA files. Monoisotopic peak refinement and a "running" false discovery rate method for score cutoff determination were also implemented along with RTS in a package called Orbiter. Part of the running FDR method was using a linear discriminant combination of Comet score values to better separate incorrect from correct matches.
 
-Bold claims that you can get all of the data in half the time with Orbiter RTS are also made. That sounds pretty good, right? Who doesn't love a good half off sale? Does it make sense that using RTS is twice as good? We usually skip 1+ ions so that solvent ions and polymers don't waste instrument time. The fraction of acquired MS2 scans that we can identify on Orbitraps these days is quite a bit higher than we had on low resolution ion traps. Is the situation still so bad that there are low hanging factors-of-two fruit?
+Bold claims that you can get all of the data in half the time with Orbiter RTS were also made. That sounds pretty good, right? Who doesn't love a good half-off sale? Does it make sense that using RTS is twice as good? We usually skip 1+ ions so that solvent ions and polymers don't waste instrument time. The fraction of acquired MS2 scans that we can identify on Orbitraps these days is quite a bit higher than we had on low resolution ion traps. Is the situation still so bad that there are low hanging factors-of-two fruit?
 
-When you get old and have lots of grey hair, you start thinking every door knock, phone call, and email is out to get you. That makes you just a wee bit skeptical. The data from Schweppe et al. was deposited in PRIDE (project [PXD017823](https://www.ebi.ac.uk/pride/archive/projects/PXD017823)), so I downloaded the data and re-processed it with my [pipeline](https://github.com/pwilmart/PAW_pipeline). Two sets of samples were presented in the paper: yeast samples and human cell line samples. Only the human cell line data (presented in Figure 4) was in the PRIDE archive.
+When you get old and have lots of grey hair, you start thinking every door knock, phone call, and email is out to get you. That makes you just a wee bit skeptical. The data from Schweppe et al. was deposited in PRIDE (project [PXD017823](https://www.ebi.ac.uk/pride/archive/projects/PXD017823)), so I downloaded the data and re-processed it with my [TMT pipeline](https://github.com/pwilmart/PAW_pipeline). Two sets of samples were presented in the paper: yeast samples and human cell line samples. Only the human cell line data (presented in Figure 4) was in the PRIDE archive.
 
-The instrument was a Thermo Orbitrap Fusion Lumos Tribrid using typical SPS MS3 settings. Proteins were digested with trypsin and labeled with 10-plex TMT. High pH reverse phase was used to create a 12-fraction experiment. A conventional SPS MS3 method was used with 180-minute low pH RP separations for one dataset. The same 12-fractions were also ran with a 90-minute gradient using the Orbiter RTS acquisition software. However, the real time search use and the gradient length were not the only differences. A dynamic-exclusion like feature called protein close-out was also employed. Protein close-out was mentioned in a figure caption of the first RTS paper. It was described as limiting MS3 scans for each protein once data from 4 PSMs had been acquired. I think this is applied per LC run. It is not clear exactly what other criteria might be in play. Obviously, we have to have a successful sequence assignment so we know the protein. It is not mentioned if shared peptides are excluded (and in what context shared is define in), or if some sort of reporter ion quality metric has to be met.
+The instrument was a Thermo Orbitrap Fusion Lumos Tribrid using typical SPS MS3 settings. Proteins were digested with trypsin and labeled with 10-plex TMT. High pH reverse phase was used to create a 12-fraction experiment. A conventional SPS MS3 method was used with 180-minute low pH RP separations for one dataset. The same 12-fractions were also ran with a 90-minute gradient using the Orbiter RTS acquisition software. However, the real time search use and the gradient length were not the only differences. A dynamic-exclusion like feature called protein close-out was also employed. Protein close-out was mentioned in a figure caption of the first RTS paper. It was described as limiting MS3 scans for each protein once data from 4 PSMs had been acquired. I think this is applied per LC run. It is not clear exactly what other criteria might be in play. Obviously, we have to have a successful sequence assignment so we know the protein. It is not mentioned if shared peptides are excluded (and in what context shared is defined in), or if some sort of reporter ion quality metric has to be met.
 
-Details aside, I suspect protein close-out might be pretty important to the claim of all of the data in half the time. There are no data for RTS with and without protein close-out in the archive, so its effect cannot be evaluated.  
+Details aside, I suspect protein close-out might be pretty important to the claim that you can get all of the data in half the time. There are no data for RTS with and without protein close-out in the archive, so its direct effect cannot be evaluated.  
 
 ## Any evidence for a mass measurement problem?
 
-The PAW pipeline does not recommend using narrow parent ion tolerance database searching (a common shortcoming in nearly all proteomic data analyses). Instead wider tolerance searches are used and histograms of the deltamasses between the measured MH+ values and the theoretical MH+ masses of the assign peptide sequences are used to create conditional discriminant score histograms. This allows some quality control of the mass calibration and resolution of the instrument.
+The PAW pipeline does not recommend using narrow parent ion tolerance database searching (a common shortcoming in nearly all proteomic data analyses). Instead, wider tolerance searches are used and histograms of the deltamasses between the measured MH+ values and the theoretical MH+ masses of the assign peptide sequences are used to create conditional discriminant score histograms. This allows some quality control of the mass calibration and resolution of the instrument.
 
 Maybe we can see something funny about the deltamasses that would suggest that we have a monoisotopic mass calling issue that needs fixing. Why fix something if it is not broken?  
 
+#### Regular SPS MS3 acquisition:
 ![Regular_deltamass_2plus](images/Regular_deltamass_2plus.png)
 
+#### RTS acquisition:
 ![RTS_deltamass_2plus](images/RTS_deltamass_2plus.png)
 
 The 2+ deltamasses look very similar for either acquisition mode. There does not seem to be any evidence that the regular acquisition mode data has any mass measurement issues.
 
+#### Regular SPS MS3 acquisition:
 ![Regular_deltamass_3plus](images/Regular_deltamass_3plus.png)
 
+#### RTS acquisition:
 ![RTS_deltamass_3plus](images/RTS_deltamass_3plus.png)
 
 The 3+ deltamasses are also similar with no indications of any issues.
 
+#### Regular SPS MS3 acquisition:
 ![Regular_deltamass_4plus](images/Regular_deltamass_4plus.png)
 
+#### RTS acquisition:
 ![RTS_deltamass_4plus](images/RTS_deltamass_4plus.png)
 
 The 4+ deltamasses have fewer PSMs and the there is some peak broadening with increasing charge.
