@@ -36,37 +36,37 @@ The PAW pipeline does not recommend using narrow parent ion tolerance database s
 
 Maybe we can see something funny about the deltamasses that would suggest that we have a monoisotopic mass calling issue that needs fixing. Why fix something if it is not broken?  
 
-#### Regular SPS MS3 acquisition:
+#### Regular SPS MS3 acquisition (2+ peptides):
 ![Regular_deltamass_2plus](images/Regular_deltamass_2plus.png)
 
-#### RTS acquisition:
+#### RTS acquisition (2+ peptides):
 ![RTS_deltamass_2plus](images/RTS_deltamass_2plus.png)
 
 The 2+ deltamasses look very similar for either acquisition mode. There does not seem to be any evidence that the regular acquisition mode data has any mass measurement issues.
 
-#### Regular SPS MS3 acquisition:
+#### Regular SPS MS3 acquisition (3+ peptides):
 ![Regular_deltamass_3plus](images/Regular_deltamass_3plus.png)
 
-#### RTS acquisition:
+#### RTS acquisition (3+ peptides):
 ![RTS_deltamass_3plus](images/RTS_deltamass_3plus.png)
 
 The 3+ deltamasses are also similar with no indications of any issues.
 
-#### Regular SPS MS3 acquisition:
+#### Regular SPS MS3 acquisition (4+ peptides):
 ![Regular_deltamass_4plus](images/Regular_deltamass_4plus.png)
 
-#### RTS acquisition:
+#### RTS acquisition (4+ peptides):
 ![RTS_deltamass_4plus](images/RTS_deltamass_4plus.png)
 
 The 4+ deltamasses have fewer PSMs and the there is some peak broadening with increasing charge.
 
-There does not seem to be any indications that there is any significant mass measurement issue to be correcting. Thermo has improved their peak calling algorithms over the years. There may have been some issues many years ago that have become urban myths. It is probably not worth the computational time to test monoisotopic masses. The publication also uses a linear discriminant function for improved correct and incorrect discrimination. The deltaCN score in Comet needs a sufficient number of scored matches to be reliable. Trying to use very narrow tolerance searches of less than 20 PPM might be problematic. Wider tolerances of 50 to 100 PPM might be safer and would be plenty fast.
+There does not seem to be any indications that there is any significant mass measurement issue to be correcting. Thermo has improved their peak calling algorithms over the years. There may have been some issues many years ago that have become urban myths. It is probably not worth the computational time to test monoisotopic masses. The publication also uses a linear discriminant function for improved correct and incorrect discrimination. The deltaCN score in Comet needs a sufficient number of scored matches to be reliable. Trying to use very narrow tolerance searches of less than 20 PPM might be problematic (DeltaCN can become unstable). Wider tolerances of 50 to 100 PPM might be safer and would be plenty fast.
 
 ---
 
 ## Dataset Details
 
-Each experiment was 12 fractions. We can tally the number of MS2 and MS3 scans logged by the instrument in each acquisition mode. These are the starting details.
+Each experiment was 12 fractions. We can tally the number of MS2 and MS3 scans logged by the instrument in each acquisition mode. These are the starting numbers.
 
 #### Overall numbers of scans:
 
@@ -84,7 +84,9 @@ Mode|Total|Non-empty MS3|Empty/Missing MS3|Fraction Non-empty
 Regular SPS MS3|106,989|106,835|154|99.9%
 RTS w/ close-out|116,671|30,604|86,067|26.2%
 
-The identification rates were 30% for the regular SPS MS3 data and 25% for the RTS data. In all quantitative shotgun proteomics experiments, protein inference should occur before proper quantitative protein summaries derived from the quantitative PSM data can be done. Many observed peptides can match to more than one protein. This needs to be determined before individual PSMs can be categorized as informative or non-informative for expression summaries. Low abundance peptides can be identified due to the trapping nature of the instruments. Identification and quantification are somewhat independent. The criteria for quantification is stricter than for identification. Identified peptides may have no or poor reporter ion signals even if an MS3 scan was acquired. The RTS mode adds another wrinkle. It does not run your LC backwards to undo the time spent acquiring an MS2 scan. If that scan does not yield a good enough score for an identification, the best the method can do is to skip the MS3 scan and try the next precursor. There will be orphan MS2 scans (MS2 scans without any associated MS3 scan) when doing RTS acquisition.
+The identification rates were 30% for the regular SPS MS3 data and 25% for the RTS data. In all quantitative shotgun proteomics experiments, protein inference should occur before proper quantitative protein summaries derived from the quantitative PSM data can be done. Many observed peptides can match to more than one protein. This needs to be determined before individual PSMs can be categorized as informative or non-informative for expression summaries. Low abundance peptides can be identified due to the trapping nature of the instruments. Identification and quantification are somewhat independent.
+
+The criteria for quantification is stricter than for identification. Identified peptides may have no or poor reporter ion signals even if an MS3 scan was acquired. The RTS mode adds another wrinkle. It does not run your LC backwards to undo the time spent acquiring an MS2 scan. If that scan does not yield a good enough score for an identification, the best the method can do is to skip the MS3 scan and try the next precursor. There will be orphan MS2 scans (MS2 scans without any associated MS3 scan) when doing RTS acquisition.
 
 A non-empty tally means we had an MS2 scan and an associated MS3 scan and the reporter ions in the MS3 scan were sufficiently good signals. An empty tally means that either an MS2 scan did not have an MS3 scan or that the MS3 scan had poor reporter ion signals. We have a dramatic drop in the number of MS3 scans for the RTS experiment. That frees up instrument time to sample more precursors (we had 29% more MS2 scans).
 
@@ -94,17 +96,17 @@ We can break it down by fractions, too. That might give us some insight into the
 
 ![Reg_filtered_scans](images/Reg_filtered_scans.png)
 
-With the regular SPS MS3 method, we have essentially an equal number of MS3 scans as MS2 scans for each first dimension fraction. There are very few MS3 scans without reporter ion signals. A little more detective work may be needed to understand the trends in the RTS data. Data without protein close-out would be helpful.
+With the regular SPS MS3 method, we have essentially an equal number of MS3 scans as MS2 scans for each first dimension fraction. There are very few MS3 scans without reporter ion signals.
 
 ![RTS_filtered_scans](images/RTS_filtered_scans.png)
 
-The RTS data is quite different. The steady decline in non-empty PSM count is likely a result of the protein close-out feature. As the instrument acquires fewer MS3 scans, there is an increase in the number of MS2 scans. The MS2 scan counts were flatter for the regular SPS MS3 method.
+The RTS data is quite different. The steady decline in non-empty PSM count is likely a result of the protein close-out feature. As the instrument acquires fewer MS3 scans, there is an increase in the number of MS2 scans. The MS2 scan counts were flatter for the regular SPS MS3 method. A little more detective work may be needed to understand the trends in the RTS data. Data without protein close-out would be helpful.
 
 ---
 
 ## Individual Proteins (two of them)
 
-Figure 4F shows two proteins where the acquisition mode resulted in different quantitative measurements. There are some data differences between the Schweppe et al. publication and my pipeline. The quantitative data I extract for the reporter ions are the peak heights. Peak heights are often a good proxy for peak areas (if peaks have the same shapes) and are commonly used for quantitative mass spectrometry measurements. The Gygi lab (and Proteome Discoverer) favor signal to noise ratios. These are signal quality metrics and not quantitative measures. S/N ratios do not have any units. They are compressed in range because of the division. If you have a measurement with noise and you have a noise estimate, the thing to do is to **subtract** the noise from the signal. This is actually already done on the data that is logged by Orbitrap instruments. FDR filtering differs a little between any pipelines. Protein inference and what peptides are considered usable for quantitative roll up is not well detailed in the publication, but that also differs by pipeline (probably more than for PSM FDR filtering).  
+Figure 4F shows two proteins where the acquisition mode resulted in different quantitative measurements. There are some data differences between the Schweppe et al. publication and my pipeline. The quantitative data I extract for the reporter ions are the peak heights. Peak heights are often good proxies for peak areas (if peaks have the same shapes) and are commonly used for quantitative mass spectrometry measurements. The Gygi lab (and Proteome Discoverer) favor signal-to-noise ratios. These are signal quality metrics and not quantitative measures. S/N ratios do not have any units. They are compressed in range because of the division. If you have a measurement with noise and you have a noise estimate, the thing to do is to **subtract** the noise from the signal. This is actually already done on the data that is logged by Orbitrap instruments. FDR filtering differs a little between any pipelines. Protein inference and what peptides are considered usable for quantitative roll up is not well detailed in the publication, but that also differs by pipeline (probably more than for PSM FDR filtering).  
 
 That said, what did my analysis have for the expression of these two proteins?
 
@@ -128,11 +130,11 @@ Do these two edge cases have any real bearing on the discussion? Probably not. T
 
 There are three different cell lines (HCT116, MCF7, and HEK293) so we can compare the cells for differential expression using [edgeR](https://academic.oup.com/bioinformatics/article/26/1/139/182458) and [Jupyter](https://jupyter.org/) notebooks. The cell lines are different from each other. The variance is low for cell cultures (around 5% for median CVs). That combination means that most proteins are statistically different between cell lines (75-80% of the 7469 proteins). The increased sampling for the regular SPS MS3 method had a little lower CVs and had about 4% more differential candidates than the RTS acquisition mode (with protein close-out). I don't think any of these testing results are quite Nature/Science/Cell magazine quality.
 
-Since the same samples were run in both experiments, we can create a mock reference channel and match the data between acquisition methods. The `Schweppe_RTS_by-method` helps to show that the actual reporter ion data is rather different between the two acquisition modes.
+Since the same samples were run in both experiments, we can create a mock reference channel and match the data between acquisition methods. The `Schweppe_RTS_by-method` shows that the actual reporter ion data is rather different between the two acquisition modes. The expression testing between the three cell lines is done in separate notebooks for each acquisition mode. Testing is also done on data before and after the IRS method to see if IRS on data with rather different properties would distort the data in some way. The pre- and post-IRS data seemed essentially the same in terms of edgeR testing results.
 
 #### The notebooks have all of the details:
 
-- **[Schweppe_RTS_by-method](Schweppe_RTS_by-method.ipynb)** - This notebook compares the regular SPS MS3 acquisition method with the new real time search (RTS) acquisition method. Note that the RTS acquisition used here also a used protein close-out feature to limit redundant acquisition of peptide from abundant proteins.
+- **[Schweppe_RTS_by-method](Schweppe_RTS_by-method.ipynb)** - This notebook compares the regular SPS MS3 acquisition method with the new real time search (RTS) acquisition method. Note that the RTS acquisition used here also used a protein close-out feature to limit redundant acquisition of peptide from abundant proteins.
 - **[PXD017823_RTS_comparisons_IRS](PXD017823_RTS_comparisons_IRS.ipynb)** - This notebook compares cell line expression with edgeR for the RTS data (not the IRS adjusted values).
 - **[PXD017823_Regular_comparisons](PXD017823_Regular_comparisons.ipynb)** - This notebook compares cell line expression with edgeR for the regular SPS MS3 data (not the IRS adjusted values).
 - **[PXD017823_RTS_comparisons_IRS](PXD017823_RTS_comparisons_IRS.ipynb)** - This notebook compares cell line expression with edgeR for the RTS data after IRS was applied.
@@ -144,11 +146,11 @@ Since the same samples were run in both experiments, we can create a mock refere
 
 ## Conclusions
 
-Does RTS seem to work? I think so. That is the first question to answer. I would have liked to see more A/B datasets in the second RST paper exploring the multiple topics one at a time more carefully. Is it a refinement paper or another proof of principle paper? We are all too smart for our own good. The dust doesn't have time to settle on the question of does RTS work before we start imagining ways to exploit the concept. I do think RST (and some related things that go with that) can strongly bias your data. That is at the heart of how you can exploit it, of course. I would probably want to know a lot about my samples (such as from some regular SPS MS3 runs) before deciding on an RTS method. RTS could be nice for scaling up studies to include more replicates where less instrument time per plex could be used.
+Does RTS seem to work? I think so. That is the first question to answer. I would have liked to see more A/B datasets in the second RST paper exploring the multiple topics one at a time more carefully. Is it a refinement paper or another proof of principle paper? The dust doesn't have time to settle on the question of does RTS work before we start imagining ways to exploit the concept. I do think RST (and some related things that go with that) can strongly bias your data. That is at the heart of how you can exploit it, of course. I would probably want to know a lot about my samples (such as from some regular SPS MS3 runs) before deciding on an RTS method. RTS could be nice for scaling up studies to include more replicates where less instrument time per plex could be used.
 
-The RAW files seem very similar to RAW files from the regular SPS MS3 method. The actual instrument method you start the run with does not have and MS3 scans in the mix. It is just a standard shotgun ID experiment (survey scans and MS2 scans). Then the MS2 scan stream is spied on by the computer running Comet. When scans return sufficiently good matches, the control computer highjacked to insert SPS MS3 scans. The notches selected in the MS2 scan are based on the assigned peptide sequence rather than intensity. Then the SPS MS3 data enters the RAW file data stream. There is the chance that an SPS MS3 scan can happen outside of the main instrument cycle (i.e. after the next survey scan). That scan structure would be different from the regular SPS MS3 data. Normally MS3 scans occur after MS2 scans, but always before the next MS1 scan. There were some precursor m/z values associated with the MS2 scans and their triggered MS3 scans that were not exactly the same. I am not sure if this was because of the monisotopic mass corrections or just some small bug in Orbiter. I also processed some demo data from Thermo with their implementation of RTS in [this repository](https://github.com/OHSU-Proteomics/Eclipse_to_Fusion_comparison). I did not see any precursor mass discrepancies in that data.
+The RAW files from RTS seem very similar to RAW files from the regular SPS MS3 method. The actual instrument method does not have any MS3 scans in the mix. It is just a standard shotgun ID experiment (survey scans and MS2 scans). Then the MS2 scan stream is spied on by the computer running Comet. When scans return sufficiently good matches, the control computer is highjacked to insert SPS MS3 scans. The notches selected in the MS2 scan are based on the assigned peptide sequence rather than intensity. Then the SPS MS3 data enters the RAW file data stream and the MS3 scans are logged. There is the chance that an SPS MS3 scan can happen outside of the main instrument cycle (i.e. after the next survey scan). That scan structure would be different from the regular SPS MS3 data. Normally MS3 scans occur after MS2 scans, but always before the next MS1 scan. There were some precursor m/z values associated with MS2 scans and triggered MS3 scans that were not exactly the same. I am not sure if this was because of the monisotopic mass corrections or just some small bug in Orbiter. I also processed some demo data from Thermo with their implementation of RTS in [this repository](https://github.com/OHSU-Proteomics/Eclipse_to_Fusion_comparison). I did not see any precursor mass discrepancies in that data.
 
-I love TMT data on the Tribrids. It is really amazing. You really need the SPS MS3 step to make TMT work. Real time search and intelligent acquisition methods have arrived. Hold my jet pack, I need to set up labs on the bottom of the ocean and on the moon (if you grew up in the sixties, you might get the jokes...). This all seems like something from the future, for sure. I think it may be ignoring the elephant in the room. Cutting the instrument time in half will result in even more incomprehensive datasets. [def: incomprehensive - incomprehensible comprehensive data] We really need to put more effort into understanding and interpreting these types of data. The current strategies of filtering unbiased results with highly biased annotation information seems fundamentally wrong. And probably skews the results to things we already knew. I do science to learn **new** things.
+I love TMT data on the Tribrids. It is amazing. You really need the SPS MS3 step to make TMT work, though. Real time search and intelligent acquisition methods have arrived. Hold my jet pack, I need to set up labs on the bottom of the ocean and on the moon (if you grew up in the sixties, you might get the jokes). This all seems like something from the future, for sure. I think it may be ignoring the elephant in the room. Cutting the instrument time in half will result in even more incomprehensive datasets. [def: incomprehensive - incomprehensible comprehensive data] We really need to put more effort into understanding and interpreting these types of data. The current strategies of filtering unbiased results with highly biased annotation information seems fundamentally wrong. And probably skews the results to things we already knew. I do science to learn **new** things.
 
 ---
 
